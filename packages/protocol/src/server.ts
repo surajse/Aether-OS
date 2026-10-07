@@ -9,10 +9,19 @@ export type ActionHandler = (agentId: string, action: {
   command?: string;
 }) => Promise<{ success: boolean; message?: string }>;
 
+export type GoalHandler = (agentId: string, payload: {
+  goal: string;
+  testCommand?: string;
+}) => Promise<any>;
+
+export type SkillProvider = () => any[];
+
 export class AGUIServer {
   private server: http.Server;
   private clientStreams: Map<string, Set<http.ServerResponse>> = new Map();
   private actionHandler: ActionHandler | null = null;
+  private goalHandler: GoalHandler | null = null;
+  private skillProvider: SkillProvider | null = null;
 
   constructor() {
     this.server = http.createServer((req, res) => this.handleRequest(req, res));
@@ -20,6 +29,14 @@ export class AGUIServer {
 
   setActionHandler(handler: ActionHandler): void {
     this.actionHandler = handler;
+  }
+
+  setGoalHandler(handler: GoalHandler): void {
+    this.goalHandler = handler;
+  }
+
+  setSkillProvider(provider: SkillProvider): void {
+    this.skillProvider = provider;
   }
 
   private handleRequest(req: http.IncomingMessage, res: http.ServerResponse): void {
@@ -42,6 +59,14 @@ export class AGUIServer {
       return;
     }
 
+    // Match GET /api/skills
+    if (url.pathname === "/api/skills" && req.method === "GET") {
+      const skills = this.skillProvider ? this.skillProvider() : [];
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ skills, count: skills.length }));
+      return;
+    }
+
     // Match GET /api/agents/:id/stream
     const streamMatch = url.pathname.match(/^\/api\/agents\/([^/]+)\/stream$/);
     if (streamMatch && req.method === "GET") {
@@ -58,8 +83,43 @@ export class AGUIServer {
       return;
     }
 
+    // Match POST /api/agents/:id/goal
+    const goalMatch = url.pathname.match(/^\/api\/agents\/([^/]+)\/goal$/);
+    if (goalMatch && req.method === "POST") {
+      const agentId = goalMatch[1];
+      this.handleGoalPost(agentId, req, res);
+      return;
+    }
+
     res.writeHead(404, { "Content-Type": "application/json" });
     res.end(JSON.stringify({ error: "Endpoint not found" }));
+  }
+
+  private handleGoalPost(agentId: string, req: http.IncomingMessage, res: http.ServerResponse): void {
+    let body = "";
+    req.on("data", (chunk) => { body += chunk; });
+    req.on("end", async () => {
+      try {
+        const payload = body ? JSON.parse(body) : {};
+        if (!payload.goal) {
+          res.writeHead(400, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "Missing required 'goal' parameter in payload." }));
+          return;
+        }
+
+        if (this.goalHandler) {
+          const result = await this.goalHandler(agentId, payload);
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(result));
+        } else {
+          res.writeHead(503, { "Content-Type": "application/json" });
+          res.end(JSON.stringify({ error: "No goal handler attached to server." }));
+        }
+      } catch (err: any) {
+        res.writeHead(500, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({ error: err.message || "Failed to execute goal" }));
+      }
+    });
   }
 
   private handleSSEConnection(agentId: string, res: http.ServerResponse): void {

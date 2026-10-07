@@ -22,6 +22,7 @@ export interface ISandbox {
   readFile(targetPath: string): Promise<string>;
   writeFile(targetPath: string, content: string): Promise<void>;
   deleteFile(targetPath: string): Promise<void>;
+  listFiles(subDir?: string): Promise<string[]>;
   executeCommand(cmd: string, cwdRelative?: string, timeoutMs?: number): Promise<CommandResult>;
 }
 
@@ -83,6 +84,15 @@ export class LocalProcessJail implements ISandbox {
     if (fs.existsSync(safePath)) {
       await fs.promises.unlink(safePath);
     }
+  }
+
+  async listFiles(subDir = "."): Promise<string[]> {
+    const safePath = this.resolveSafePath(subDir);
+    if (!fs.existsSync(safePath)) {
+      return [];
+    }
+    const entries = await fs.promises.readdir(safePath, { recursive: true });
+    return entries.map(String);
   }
 
   /**

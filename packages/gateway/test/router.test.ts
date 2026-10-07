@@ -57,4 +57,18 @@ describe("ModelGateway Cascading Router", () => {
 
     await expect(gateway.generate(dummyMessages)).rejects.toThrow("All providers failed in ModelGateway chain");
   });
+
+  it("createDefaultGatewayFromEnv builds a working fallback gateway", async () => {
+    const { createDefaultGatewayFromEnv, AnthropicProvider, OpenAIProvider } = await import("../src/index.js");
+    const gateway = createDefaultGatewayFromEnv();
+    const res = await gateway.generate(dummyMessages);
+    expect(res.providerUsed).toBe("AetherLocalFallback");
+
+    // Test API key check on unconfigured provider
+    const unconfiguredAnthropic = new AnthropicProvider("");
+    await expect(unconfiguredAnthropic.generate(dummyMessages)).rejects.toThrow("Anthropic API key is not configured.");
+
+    const unconfiguredOpenAI = new OpenAIProvider("");
+    await expect(unconfiguredOpenAI.generate(dummyMessages)).rejects.toThrow("OpenAI API key is not configured.");
+  });
 });
