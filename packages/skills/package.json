@@ -1,0 +1,22 @@
+{
+  "name": "@aether/skills",
+  "version": "0.1.0",
+  "description": "Self-synthesizing skill engine and trajectory miner for AetherOS",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aether/types": "workspace:*",
+    "@aether/protocol": "workspace:*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "@aether/cli",
+  "version": "0.1.0",
+  "description": "Command line interface and daemon launcher for AetherOS (OpenDots)",
+  "type": "module",
+  "bin": {
+    "aether": "./bin/aether.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@aether/types": "workspace:*",
+    "@aether/core": "workspace:*",
+    "@aether/sandbox": "workspace:*",
+    "@aether/gateway": "workspace:*",
+    "@aether/protocol": "workspace:*",
+    "@aether/memory": "workspace:*",
+    "@aether/skills": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

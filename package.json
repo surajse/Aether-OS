@@ -1,0 +1,18 @@
+{
+  "name": "aether-os",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Universal Open-Source Sovereign Agent Operating System & Generative UI Canvas",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "tsc --build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0",
+    "zod": "^3.23.8"
+  }
+}

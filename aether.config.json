@@ -1,0 +1,33 @@
+{
+  "node": {
+    "name": "aether-local-primary",
+    "port": 4099,
+    "workspaceDir": "./workspace"
+  },
+  "governor": {
+    "interruptThreshold": 10.0,
+    "nightShiftStartHour": 23,
+    "nightShiftEndHour": 6,
+    "calmAmbientMode": true
+  },
+  "models": {
+    "primary": {
+      "provider": "anthropic",
+      "model": "claude-3-7-sonnet"
+    },
+    "fallback": {
+      "provider": "openai",
+      "model": "gpt-4o"
+    },
+    "local": {
+      "provider": "ollama",
+      "model": "llama3.2:3b",
+      "endpoint": "http://localhost:11434"
+    }
+  },
+  "sandbox": {
+    "mode": "jail",
+    "defaultTimeoutMs": 30000,
+    "maxMemoryMb": 1500
+  }
+}
