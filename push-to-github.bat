@@ -18,13 +18,11 @@ echo [*] Current Git status:
 git status -s
 echo.
 
-set /p REPO_URL="Enter your GitHub Repository URL (e.g. https://github.com/username/open-dots.git): "
+set DEFAULT_URL=https://github.com/surajse/Aether-OS.git
+echo Target Repository: %DEFAULT_URL%
+set /p REPO_URL="Press ENTER to push to %DEFAULT_URL% (or enter a different URL): "
 
-if "%REPO_URL%"=="" (
-    echo [!] No URL entered. Aborted.
-    pause
-    exit /b 1
-)
+if "%REPO_URL%"=="" set REPO_URL=%DEFAULT_URL%
 
 echo.
 echo [*] Setting remote origin to: %REPO_URL%
