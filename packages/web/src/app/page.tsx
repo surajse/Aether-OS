@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { useAgentStream } from "../hooks/useAgentStream.js";
-import { CalmHUD } from "../components/CalmHUD.js";
-import { DualPlaneCanvas } from "../components/DualPlaneCanvas.js";
-import { ActionReviewModal } from "../components/ActionReviewModal.js";
+import { useAgentStream } from "../hooks/useAgentStream";
+import { CalmHUD } from "../components/CalmHUD";
+import { DualPlaneCanvas } from "../components/DualPlaneCanvas";
+import { ActionReviewModal } from "../components/ActionReviewModal";
 
 export default function AetherDashboard() {
   const { state, thoughts, tools, pendingReview, connected, sendAction } = useAgentStream("default-agent");

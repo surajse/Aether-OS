@@ -108,10 +108,17 @@ export class AutonomousOrchestrator {
 
       if (repairResponse.toolCalls && repairResponse.toolCalls.length > 0) {
         for (const call of repairResponse.toolCalls) {
-          // Classify risk
-          const classified = this.classifier.classifyCommand(
-            call.name === "execute_command" ? call.arguments.command || "" : call.name
-          );
+          // Classify risk accurately based on tool semantics
+          let classified;
+          if (call.name === "execute_command") {
+            classified = this.classifier.classifyCommand(call.arguments.command || "");
+          } else if (call.name === "write_file") {
+            classified = this.classifier.classifyFileModification(call.arguments.path || "workspace", false);
+          } else if (call.name === "read_file" || call.name === "list_files") {
+            classified = { riskLevel: "LOW" as const, isIrreversible: false, reasons: ["Read-only tool call."] };
+          } else {
+            classified = this.classifier.classifyCommand(call.name);
+          }
 
           // Action Review Gate
           const review = await this.interceptor.interceptAction(

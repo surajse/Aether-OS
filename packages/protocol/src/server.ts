@@ -144,6 +144,10 @@ export class AGUIServer {
         }
       }
       this.clientStreams.clear();
+      if (!this.server.listening) {
+        resolve();
+        return;
+      }
       this.server.close((err) => (err ? reject(err) : resolve()));
     });
   }

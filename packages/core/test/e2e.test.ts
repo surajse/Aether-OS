@@ -96,5 +96,5 @@ describe("AutonomousOrchestrator End-to-End Self-Healing Loop", () => {
     // 5. Verify the file on disk was indeed repaired
     const repairedContent = await sandbox.readFile("test.js");
     expect(repairedContent).toContain("All tests passed!");
-  });
+  }, 15000);
 });

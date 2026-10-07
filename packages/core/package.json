@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@aether/types": "workspace:*",
+    "@aether/sandbox": "workspace:*",
+    "@aether/gateway": "workspace:*",
+    "@aether/protocol": "workspace:*",
     "zod": "^3.23.8"
   },
   "devDependencies": {

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import type { ToolLogEntry } from "../hooks/useAgentStream.js";
+import type { ToolLogEntry } from "../hooks/useAgentStream";
 
 interface DualPlaneCanvasProps {
   thoughts: string[];
