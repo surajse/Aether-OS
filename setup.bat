@@ -5,12 +5,14 @@ echo    AetherOS (OpenDots) - Automated Windows Setup
 echo ================================================================================
 echo.
 
+set "PATH=%LOCALAPPDATA%\Programs\Git\cmd;C:\Program Files\nodejs;%PATH%"
+
 where git >nul 2>nul
 if %errorlevel% neq 0 (
     echo [!] Git not detected. Installing via winget...
     winget install --id Git.Git -e --accept-package-agreements --accept-source-agreements
 ) else (
-    echo [*] Git is already installed.
+    echo [*] Git is detected and working.
 )
 
 where node >nul 2>nul
@@ -18,7 +20,7 @@ if %errorlevel% neq 0 (
     echo [!] Node.js not detected. Installing via winget...
     winget install --id OpenJS.NodeJS.LTS -e --accept-package-agreements --accept-source-agreements
 ) else (
-    echo [*] Node.js is already installed.
+    echo [*] Node.js is detected and working.
 )
 
 echo.
