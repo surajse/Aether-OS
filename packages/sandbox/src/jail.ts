@@ -91,8 +91,25 @@ export class LocalProcessJail implements ISandbox {
     if (!fs.existsSync(safePath)) {
       return [];
     }
-    const entries = await fs.promises.readdir(safePath, { recursive: true });
-    return entries.map(String);
+
+    const IGNORED_DIRS = new Set(["node_modules", ".git", ".next", "dist", ".pnpm-store", "build", "coverage", ".turbo"]);
+    const results: string[] = [];
+
+    const walk = async (currentDir: string, relativePrefix: string) => {
+      const dirents = await fs.promises.readdir(currentDir, { withFileTypes: true });
+      for (const dirent of dirents) {
+        if (dirent.isDirectory()) {
+          if (!IGNORED_DIRS.has(dirent.name)) {
+            await walk(path.join(currentDir, dirent.name), path.join(relativePrefix, dirent.name));
+          }
+        } else {
+          results.push(path.join(relativePrefix, dirent.name).replace(/\\/g, "/"));
+        }
+      }
+    };
+
+    await walk(safePath, "");
+    return results;
   }
 
   /**
